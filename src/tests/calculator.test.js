@@ -1,4 +1,4 @@
-const { add, subtract, multiply, divide } = require('../calculator');
+const { add, subtract, multiply, divide, modulo, power, squareRoot } = require('../calculator');
 
 describe('Calculator - parameterized basic operations', () => {
   test.each([
@@ -46,6 +46,41 @@ describe('Calculator - example operations from image', () => {
   test('20 / 5 = 4', () => expect(divide(20, 5)).toBe(4));
 });
 
+describe('Calculator - extended operations (modulo, power, squareRoot)', () => {
+  test.each([
+    [5, 2, 1],
+    [10, 3, 1],
+    [-5, 2, -1],
+    [5, -2, 1],
+  ])('modulo(%p, %p) = %p', (a, b, expected) => {
+    expect(modulo(a, b)).toBe(expected);
+  });
+
+  test('modulo by zero yields NaN', () => {
+    const res = modulo(5, 0);
+    expect(Number.isNaN(res)).toBe(true);
+  });
+
+  test.each([
+    [2, 3, 8],
+    [2, -1, 0.5],
+    [5, 0, 1],
+    [3, 4, 81]
+  ])('power(%p, %p) = %p', (base, exp, expected) => {
+    expect(power(base, exp)).toBeCloseTo(expected);
+  });
+
+  test('squareRoot of positive numbers', () => {
+    expect(squareRoot(16)).toBe(4);
+    expect(squareRoot(2)).toBeCloseTo(Math.sqrt(2));
+    expect(squareRoot(0)).toBe(0);
+  });
+
+  test('squareRoot of negative number throws', () => {
+    expect(() => squareRoot(-1)).toThrow('Square root of negative number');
+  });
+});
+
 describe('Calculator - edge cases and properties', () => {
   test('division by zero throws', () => {
     expect(() => divide(1, 0)).toThrow('Division by zero');
@@ -67,6 +102,9 @@ describe('Calculator - edge cases and properties', () => {
     expect(Number.isNaN(subtract(1, NaN))).toBe(true);
     expect(Number.isNaN(multiply(NaN, 2))).toBe(true);
     expect(Number.isNaN(divide(NaN, 2))).toBe(true);
+    // modulo and power with NaN
+    expect(Number.isNaN(modulo(NaN, 2))).toBe(true);
+    expect(Number.isNaN(power(NaN, 2))).toBe(true);
   });
 
   test('floating point precision for common cases', () => {
